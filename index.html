@@ -1,24 +1,202 @@
-const https = require("https");
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Claude Toulouse</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0c0b09;color:#ede5d4;font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+#login{display:flex;align-items:center;justify-content:center;height:100vh;background:radial-gradient(ellipse at 60% 40%,#1a0a0a,#0c0b09);padding:24px}
+.card{background:#161310;border:1px solid #2a2218;border-radius:24px;padding:40px 32px;width:100%;max-width:360px;text-align:center}
+.logo{width:64px;height:64px;background:linear-gradient(135deg,#c0392b,#d4a017);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;font-weight:700;color:white;font-family:'Playfair Display',serif}
+h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px}
+.sub{font-size:12px;color:#7a6f5e;margin-bottom:28px}
+input[type=password]{width:100%;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;padding:14px;color:#ede5d4;font-size:16px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:0.15em;font-family:'DM Sans',sans-serif}
+.btn-main{width:100%;background:linear-gradient(135deg,#c0392b,#a93226);border:none;border-radius:12px;padding:14px;color:white;font-size:15px;font-weight:600;cursor:pointer}
+.err{color:#e74c3c;font-size:12px;margin-top:8px;display:none}
+#app{display:none;flex-direction:column;height:100vh}
+header{background:#141210;border-bottom:1px solid #1e1a15;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.hlogo{width:36px;height:36px;background:linear-gradient(135deg,#c0392b,#d4a017);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white}
+.htitle{font-family:'Playfair Display',serif;font-size:15px}
+.hsub{font-size:10px;color:#7a6f5e}
+.dot{width:7px;height:7px;background:#2ecc71;border-radius:50%;margin-left:auto;box-shadow:0 0 8px #2ecc71aa}
+.tabs{display:flex;background:#141210;border-bottom:1px solid #1e1a15;flex-shrink:0}
+.tab{flex:1;padding:10px 4px;border:none;background:none;color:#7a6f5e;font-size:11px;cursor:pointer;border-bottom:2px solid transparent;font-family:'DM Sans',sans-serif}
+.tab.active{color:#d4a017;border-bottom-color:#d4a017;font-weight:600}
+#chat-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msg-user{background:linear-gradient(135deg,#c0392b22,#c0392b44);border:1px solid #c0392b55;border-radius:16px 16px 4px 16px;padding:10px 14px;align-self:flex-end;max-width:82%;font-size:14px;line-height:1.6}
+.msg-bot{background:#1a1714;border:1px solid #2a2218;border-radius:16px 16px 16px 4px;padding:10px 14px;align-self:flex-start;max-width:88%;font-size:14px;line-height:1.6}
+.msg-label{font-size:9px;color:#d4a017;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
+.typing{display:flex;gap:5px;align-items:center;padding:12px 16px;background:#1a1714;border:1px solid #2a2218;border-radius:16px;align-self:flex-start;width:64px}
+.typing span{width:7px;height:7px;background:#d4a017;border-radius:50%;animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.input-zone{background:#141210;border-top:1px solid #1e1a15;padding:10px 12px;display:flex;align-items:flex-end;gap:8px;flex-shrink:0}
+textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;padding:10px 14px;color:#ede5d4;font-size:14px;resize:none;max-height:100px;min-height:42px;line-height:1.5;outline:none;font-family:'DM Sans',sans-serif}
+.mic-btn{width:42px;height:42px;border-radius:11px;border:1px solid #2a2218;background:#1e1a15;color:#7a6f5e;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mic-btn.on{border-color:#c0392b;background:#c0392b22;color:#c0392b}
+.send-btn{width:42px;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#c0392b,#a93226);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.panel{flex:1;overflow-y:auto;padding:16px;display:none;flex-direction:column;gap:12px}
+.stitle{font-size:11px;font-weight:600;color:#d4a017;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.card2{background:#1a1714;border:1px solid #2a2218;border-radius:14px;padding:14px}
+.add-row{display:flex;gap:8px;margin-bottom:12px}
+.add-input{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:10px;padding:10px 12px;color:#ede5d4;font-size:13px;outline:none;font-family:'DM Sans',sans-serif}
+.add-btn{background:linear-gradient(135deg,#c0392b,#a93226);border:none;border-radius:10px;padding:10px 16px;color:white;font-weight:600;cursor:pointer;font-size:18px}
+.item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #1e1a15}
+.item:last-child{border-bottom:none}
+.chk{width:22px;height:22px;border-radius:6px;border:1px solid #2a2218;background:none;cursor:pointer;color:#2ecc71;font-size:12px;flex-shrink:0}
+.del{background:none;border:none;color:#5a5040;cursor:pointer;font-size:16px;padding:2px 6px}
+.empty{color:#5a5040;font-size:13px;text-align:center;padding:20px 0}
+.welcome{text-align:center;padding:40px 16px;color:#7a6f5e}
+</style>
+</head>
+<body>
 
-module.exports = async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.status(200).end();
+<div id="login">
+  <div class="card">
+    <div class="logo">C</div>
+    <h1>Claude — Toulouse</h1>
+    <div class="sub">Assistant personnel sécurisé</div>
+    <input type="password" id="pw" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()"/>
+    <button class="btn-main" onclick="login()">Entrer</button>
+    <div class="err" id="err">Mot de passe incorrect bé !</div>
+  </div>
+</div>
 
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01"
-      },
-      body: JSON.stringify(req.body)
-    });
-    const data = await response.json();
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+<div id="app">
+  <header>
+    <div class="hlogo">C</div>
+    <div><div class="htitle">Claude — Toulouse</div><div class="hsub">Toujours disponible · Accès privé</div></div>
+    <div class="dot"></div>
+  </header>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('chat',this)">💬 Chat</button>
+    <button class="tab" onclick="showTab('projects',this)">📋 Projets</button>
+    <button class="tab" onclick="showTab('reminders',this)">⏰ Rappels</button>
+    <button class="tab" onclick="showTab('memory',this)">🧠 Mémoire</button>
+  </div>
+  <div id="chat-panel">
+    <div id="chat-area">
+      <div class="welcome">
+        <div style="font-size:36px;margin-bottom:12px">🌹</div>
+        <div style="font-family:'Playfair Display',serif;font-size:24px;color:#ede5d4;margin-bottom:6px">Bonjour bé Jacques !</div>
+        <div style="font-size:13px;line-height:1.7">Ton assistant personnel, sécurisé et toujours disponible.<br/>Parle ou écris, je suis là !</div>
+      </div>
+    </div>
+    <div class="input-zone">
+      <button class="mic-btn" id="micbtn" onclick="startVoice()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3zm7 9a7 7 0 0 1-14 0H3a9 9 0 0 0 8 8.94V22h2v-2.06A9 9 0 0 0 21 11h-2z"/></svg></button>
+      <textarea id="inp" placeholder="Écris ou parle..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
+      <button class="send-btn" onclick="send()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <div id="projects-panel" class="panel">
+    <div class="stitle">Projets</div>
+    <div class="add-row"><input class="add-input" id="np" placeholder="Nouveau projet..." onkeydown="if(event.key==='Enter')addP()"/><button class="add-btn" onclick="addP()">+</button></div>
+    <div class="card2" id="pl"><div class="empty">Aucun projet bé !</div></div>
+  </div>
+  <div id="reminders-panel" class="panel">
+    <div class="stitle">Rappels</div>
+    <div class="add-row"><input class="add-input" id="nr" placeholder="Rappel..." style="flex:2"/><input class="add-input" id="nt" placeholder="Heure" style="flex:1;max-width:80px"/><button class="add-btn" onclick="addR()">+</button></div>
+    <div class="card2" id="rl"><div class="empty">Aucun rappel !</div></div>
+  </div>
+  <div id="memory-panel" class="panel">
+    <div class="stitle">Mémoire</div>
+    <div class="add-row"><input class="add-input" id="nm" placeholder="Info à retenir..." onkeydown="if(event.key==='Enter')addM()"/><button class="add-btn" onclick="addM()">+</button></div>
+    <div class="card2" id="ml"><div class="empty">Aucune info bé !</div></div>
+  </div>
+</div>
+
+<script>
+const PW="toulouse31";
+const SYS=`Tu es l'assistant personnel de Jacques, un Toulousain avec accent du Sud-Ouest. Tu corriges silencieusement ses erreurs de dictée vocale. Tu lui parles avec chaleur, tu utilises "bé" naturellement. Tu gères ses projets, rappels et mémoire.`;
+let msgs=JSON.parse(localStorage.getItem("m")||"[]");
+let proj=JSON.parse(localStorage.getItem("p")||"[]");
+let rems=JSON.parse(localStorage.getItem("r")||"[]");
+let mem=JSON.parse(localStorage.getItem("mm")||"[]");
+
+function login(){
+  if(document.getElementById("pw").value===PW){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="flex";
+    msgs.forEach(m=>addMsg(m.role,m.content));
+    renderP();renderR();renderM();
+  }else{document.getElementById("err").style.display="block";document.getElementById("pw").value="";}
+}
+
+function showTab(t,btn){
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("chat-panel").style.display=t==="chat"?"flex":"none";
+  ["projects","reminders","memory"].forEach(x=>{
+    const el=document.getElementById(x+"-panel");
+    el.style.display=x===t?"flex":"none";
+  });
+}
+
+async function send(){
+  const inp=document.getElementById("inp");
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value="";
+  addMsg("user",txt);
+  msgs.push({role:"user",content:txt});
+  const t=document.createElement("div");
+  t.className="typing";t.id="typing";
+  t.innerHTML="<span></span><span></span><span></span>";
+  document.getElementById("chat-area").appendChild(t);
+  document.getElementById("chat-area").scrollTop=99999;
+  try{
+    let sys=SYS;
+    if(mem.length)sys+="\nMÉMOIRE: "+mem.join(", ");
+    if(proj.length)sys+="\nPROJETS: "+proj.map(p=>p.n+"("+p.s+")").join(", ");
+    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sys,messages:msgs.slice(-20)})});
+    const data=await res.json();
+    const reply=data.content?.map(b=>b.text||"").join("")||"Erreur bé !";
+    msgs.push({role:"assistant",content:reply});
+    localStorage.setItem("m",JSON.stringify(msgs.slice(-50)));
+    document.getElementById("typing")?.remove();
+    addMsg("assistant",reply);
+  }catch(e){document.getElementById("typing")?.remove();addMsg("assistant","Erreur de connexion bé !");}
+}
+
+function addMsg(role,text){
+  const area=document.getElementById("chat-area");
+  const d=document.createElement("div");
+  d.className=role==="user"?"msg-user":"msg-bot";
+  if(role!=="user")d.innerHTML='<div class="msg-label">Claude · Toulouse</div>'+text.replace(/\n/g,"<br>");
+  else d.textContent=text;
+  area.appendChild(d);
+  area.scrollTop=99999;
+}
+
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert("Vocal non supporté.");return;}
+  const r=new SR();r.lang="fr-FR";
+  const btn=document.getElementById("micbtn");
+  r.onstart=()=>btn.classList.add("on");
+  r.onend=()=>btn.classList.remove("on");
+  r.onresult=e=>{document.getElementById("inp").value=e.results[0][0].transcript;};
+  r.start();
+}
+
+function addP(){const v=document.getElementById("np").value.trim();if(!v)return;proj.push({n:v,s:"En cours",d:new Date().toLocaleDateString("fr-FR")});localStorage.setItem("p",JSON.stringify(proj));document.getElementById("np").value="";renderP();}
+function toggleP(i){proj[i].s=proj[i].s.startsWith("✅")?"En cours":"✅ Terminé";localStorage.setItem("p",JSON.stringify(proj));renderP();}
+function delP(i){proj.splice(i,1);localStorage.setItem("p",JSON.stringify(proj));renderP();}
+function renderP(){const el=document.getElementById("pl");if(!proj.length){el.innerHTML='<div class="empty">Aucun projet bé !</div>';return;}el.innerHTML=proj.map((p,i)=>`<div class="item"><button class="chk" onclick="toggleP(${i})">${p.s.startsWith("✅")?"✅":"○"}</button><div style="flex:1"><div style="font-size:13px;color:${p.s.startsWith("✅")?"#5a5040":"#ede5d4"};text-decoration:${p.s.startsWith("✅")?"line-through":"none"}">${p.n}</div><div style="font-size:10px;color:#5a5040">${p.s} · ${p.d}</div></div><button class="del" onclick="delP(${i})">✕</button></div>`).join("");}
+
+function addR(){const t=document.getElementById("nr").value.trim();const h=document.getElementById("nt").value;if(!t)return;rems.push({t,h,done:false});localStorage.setItem("r",JSON.stringify(rems));document.getElementById("nr").value="";document.getElementById("nt").value="";renderR();}
+function toggleR(i){rems[i].done=!rems[i].done;localStorage.setItem("r",JSON.stringify(rems));renderR();}
+function delR(i){rems.splice(i,1);localStorage.setItem("r",JSON.stringify(rems));renderR();}
+function renderR(){const el=document.getElementById("rl");if(!rems.length){el.innerHTML='<div class="empty">Aucun rappel !</div>';return;}el.innerHTML=rems.map((r,i)=>`<div class="item"><button class="chk" onclick="toggleR(${i})">${r.done?"✅":"○"}</button><div style="flex:1"><div style="font-size:13px;color:${r.done?"#5a5040":"#ede5d4"};text-decoration:${r.done?"line-through":"none"}">${r.t}</div>${r.h?`<div style="font-size:10px;color:#d4a017">⏰ ${r.h}</div>`:""}</div><button class="del" onclick="delR(${i})">✕</button></div>`).join("");}
+
+function addM(){const v=document.getElementById("nm").value.trim();if(!v)return;mem.push(v);localStorage.setItem("mm",JSON.stringify(mem));document.getElementById("nm").value="";renderM();}
+function delM(i){mem.splice(i,1);localStorage.setItem("mm",JSON.stringify(mem));renderM();}
+function renderM(){const el=document.getElementById("ml");if(!mem.length){el.innerHTML='<div class="empty">Aucune info bé !</div>';return;}el.innerHTML=mem.map((m,i)=>`<div class="item"><div style="flex:1;font-size:13px">🧠 ${m}</div><button class="del" onclick="delM(${i})">✕</button></div>`).join("");}
+</script>
+</body>
+</html>
