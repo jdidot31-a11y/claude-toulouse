@@ -22,6 +22,9 @@ header{background:#141210;border-bottom:1px solid #1e1a15;padding:12px 16px;disp
 .htitle{font-family:'Playfair Display',serif;font-size:15px}
 .hsub{font-size:10px;color:#7a6f5e}
 .dot{width:7px;height:7px;background:#2ecc71;border-radius:50%;margin-left:auto;box-shadow:0 0 8px #2ecc71aa}
+/* Badge correction accent dans le header */
+#correction-badge{display:none;font-size:10px;color:#d4a017;background:rgba(212,160,23,0.12);border:1px solid rgba(212,160,23,0.3);border-radius:20px;padding:3px 10px;margin-left:auto;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 .tabs{display:flex;background:#141210;border-bottom:1px solid #1e1a15;flex-shrink:0}
 .tab{flex:1;padding:10px 4px;border:none;background:none;color:#7a6f5e;font-size:11px;cursor:pointer;border-bottom:2px solid transparent;font-family:'DM Sans',sans-serif}
 .tab.active{color:#d4a017;border-bottom-color:#d4a017;font-weight:600}
@@ -30,6 +33,8 @@ header{background:#141210;border-bottom:1px solid #1e1a15;padding:12px 16px;disp
 .msg-user{background:linear-gradient(135deg,#c0392b22,#c0392b44);border:1px solid #c0392b55;border-radius:16px 16px 4px 16px;padding:10px 14px;align-self:flex-end;max-width:82%;font-size:14px;line-height:1.6}
 .msg-bot{background:#1a1714;border:1px solid #2a2218;border-radius:16px 16px 16px 4px;padding:10px 14px;align-self:flex-start;max-width:88%;font-size:14px;line-height:1.6}
 .msg-label{font-size:9px;color:#d4a017;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
+/* Badge visible sur le message corrigé */
+.msg-corrected-tag{font-size:9px;color:#d4a017;background:rgba(212,160,23,0.1);border:1px solid rgba(212,160,23,0.2);border-radius:6px;padding:1px 6px;display:inline-block;margin-bottom:5px}
 .typing{display:flex;gap:5px;align-items:center;padding:12px 16px;background:#1a1714;border:1px solid #2a2218;border-radius:16px;align-self:flex-start;width:64px}
 .typing span{width:7px;height:7px;background:#d4a017;border-radius:50%;animation:bounce 1.2s infinite}
 .typing span:nth-child(2){animation-delay:.15s}
@@ -37,8 +42,9 @@ header{background:#141210;border-bottom:1px solid #1e1a15;padding:12px 16px;disp
 @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
 .input-zone{background:#141210;border-top:1px solid #1e1a15;padding:10px 12px;display:flex;align-items:flex-end;gap:8px;flex-shrink:0}
 textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;padding:10px 14px;color:#ede5d4;font-size:14px;resize:none;max-height:100px;min-height:42px;line-height:1.5;outline:none;font-family:'DM Sans',sans-serif}
-.mic-btn{width:42px;height:42px;border-radius:11px;border:1px solid #2a2218;background:#1e1a15;color:#7a6f5e;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mic-btn{width:42px;height:42px;border-radius:11px;border:1px solid #2a2218;background:#1e1a15;color:#7a6f5e;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
 .mic-btn.on{border-color:#c0392b;background:#c0392b22;color:#c0392b}
+.mic-btn.correcting{border-color:#d4a017;background:rgba(212,160,23,0.15);color:#d4a017}
 .send-btn{width:42px;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#c0392b,#a93226);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .panel{flex:1;overflow-y:auto;padding:16px;display:none;flex-direction:column;gap:12px}
 .stitle{font-size:11px;font-weight:600;color:#d4a017;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
@@ -71,6 +77,7 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
   <header>
     <div class="hlogo">C</div>
     <div><div class="htitle">Claude — Toulouse</div><div class="hsub">Toujours disponible · Accès privé</div></div>
+    <span id="correction-badge">✦ Correction accent…</span>
     <div class="dot"></div>
   </header>
   <div class="tabs">
@@ -88,7 +95,10 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
       </div>
     </div>
     <div class="input-zone">
-      <button class="mic-btn" id="micbtn" onclick="startVoice()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3zm7 9a7 7 0 0 1-14 0H3a9 9 0 0 0 8 8.94V22h2v-2.06A9 9 0 0 0 21 11h-2z"/></svg></button>
+      <button class="mic-btn" id="micbtn" onclick="startVoice()">
+        <svg id="mic-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3zm7 9a7 7 0 0 1-14 0H3a9 9 0 0 0 8 8.94V22h2v-2.06A9 9 0 0 0 21 11h-2z"/></svg>
+        <svg id="spin-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      </button>
       <textarea id="inp" placeholder="Écris ou parle..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
       <button class="send-btn" onclick="send()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg></button>
     </div>
@@ -110,6 +120,8 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
   </div>
 </div>
 
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
 <script>
 const PW="toulouse31";
 const SYS=`Tu es l'assistant personnel de Jacques, un Toulousain avec accent du Sud-Ouest. Tu corriges silencieusement ses erreurs de dictée vocale. Tu lui parles avec chaleur, tu utilises "bé" naturellement. Tu gères ses projets, rappels et mémoire.`;
@@ -122,7 +134,7 @@ function login(){
   if(document.getElementById("pw").value===PW){
     document.getElementById("login").style.display="none";
     document.getElementById("app").style.display="flex";
-    msgs.forEach(m=>addMsg(m.role,m.content));
+    msgs.forEach(m=>addMsg(m.role,m.content,false));
     renderP();renderR();renderM();
   }else{document.getElementById("err").style.display="block";document.getElementById("pw").value="";}
 }
@@ -142,7 +154,7 @@ async function send(){
   const txt=inp.value.trim();
   if(!txt)return;
   inp.value="";
-  addMsg("user",txt);
+  addMsg("user",txt,false);
   msgs.push({role:"user",content:txt});
   const t=document.createElement("div");
   t.className="typing";t.id="typing";
@@ -159,28 +171,120 @@ async function send(){
     msgs.push({role:"assistant",content:reply});
     localStorage.setItem("m",JSON.stringify(msgs.slice(-50)));
     document.getElementById("typing")?.remove();
-    addMsg("assistant",reply);
-  }catch(e){document.getElementById("typing")?.remove();addMsg("assistant","Erreur de connexion bé !");}
+    addMsg("assistant",reply,false);
+  }catch(e){document.getElementById("typing")?.remove();addMsg("assistant","Erreur de connexion bé !",false);}
 }
 
-function addMsg(role,text){
+function addMsg(role,text,wasCorrected){
   const area=document.getElementById("chat-area");
   const d=document.createElement("div");
   d.className=role==="user"?"msg-user":"msg-bot";
-  if(role!=="user")d.innerHTML='<div class="msg-label">Claude · Toulouse</div>'+text.replace(/\n/g,"<br>");
-  else d.textContent=text;
+  if(role!=="user"){
+    d.innerHTML='<div class="msg-label">Claude · Toulouse</div>'+text.replace(/\n/g,"<br>");
+  } else {
+    // Si le message vocal a été corrigé, on affiche un petit badge discret
+    if(wasCorrected){
+      d.innerHTML='<div class="msg-corrected-tag">✦ accent corrigé</div><div>'+text+'</div>';
+    } else {
+      d.textContent=text;
+    }
+  }
   area.appendChild(d);
   area.scrollTop=99999;
 }
 
+// ── CORRECTION ACCENT TOULOUSAIN ─────────────────────────────────
+async function correctAccent(raw){
+  try{
+    const res=await fetch("/api/correct",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text:raw})
+    });
+    const data=await res.json();
+    return {text:data.corrected||raw, wasCorrected:data.wasCorrected||false};
+  }catch{
+    return {text:raw, wasCorrected:false};
+  }
+}
+
+// ── MICRO AVEC CORRECTION AUTO ────────────────────────────────────
 function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){alert("Vocal non supporté.");return;}
-  const r=new SR();r.lang="fr-FR";
+  if(!SR){alert("Reconnaissance vocale non supportée sur ce navigateur.");return;}
+  const r=new SR();
+  r.lang="fr-FR";
+  r.continuous=false;
+  r.interimResults=false;
   const btn=document.getElementById("micbtn");
-  r.onstart=()=>btn.classList.add("on");
-  r.onend=()=>btn.classList.remove("on");
-  r.onresult=e=>{document.getElementById("inp").value=e.results[0][0].transcript;};
+  const micIcon=document.getElementById("mic-icon");
+  const spinIcon=document.getElementById("spin-icon");
+  const badge=document.getElementById("correction-badge");
+
+  r.onstart=()=>{
+    btn.classList.add("on");
+  };
+
+  r.onresult=async(e)=>{
+    const raw=e.results[0][0].transcript;
+    btn.classList.remove("on");
+    // Passe en mode "correction en cours"
+    btn.classList.add("correcting");
+    micIcon.style.display="none";
+    spinIcon.style.display="block";
+    badge.style.display="inline-block";
+
+    const {text:corrected, wasCorrected}=await correctAccent(raw);
+
+    // Fin correction
+    btn.classList.remove("correcting");
+    micIcon.style.display="block";
+    spinIcon.style.display="none";
+    badge.style.display="none";
+
+    // Envoie directement avec le texte corrigé
+    const inp=document.getElementById("inp");
+    inp.value=corrected;
+
+    // Affiche le message avec badge si corrigé
+    inp.value="";
+    addMsg("user",corrected,wasCorrected);
+    msgs.push({role:"user",content:corrected});
+
+    const t=document.createElement("div");
+    t.className="typing";t.id="typing";
+    t.innerHTML="<span></span><span></span><span></span>";
+    document.getElementById("chat-area").appendChild(t);
+    document.getElementById("chat-area").scrollTop=99999;
+
+    try{
+      let sys=SYS;
+      if(mem.length)sys+="\nMÉMOIRE: "+mem.join(", ");
+      if(proj.length)sys+="\nPROJETS: "+proj.map(p=>p.n+"("+p.s+")").join(", ");
+      const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,system:sys,messages:msgs.slice(-20)})});
+      const data=await res.json();
+      const reply=data.content?.map(b=>b.text||"").join("")||"Erreur bé !";
+      msgs.push({role:"assistant",content:reply});
+      localStorage.setItem("m",JSON.stringify(msgs.slice(-50)));
+      document.getElementById("typing")?.remove();
+      addMsg("assistant",reply,false);
+    }catch(err){
+      document.getElementById("typing")?.remove();
+      addMsg("assistant","Erreur de connexion bé !",false);
+    }
+  };
+
+  r.onerror=()=>{
+    btn.classList.remove("on","correcting");
+    micIcon.style.display="block";
+    spinIcon.style.display="none";
+    badge.style.display="none";
+  };
+
+  r.onend=()=>{
+    btn.classList.remove("on");
+  };
+
   r.start();
 }
 
