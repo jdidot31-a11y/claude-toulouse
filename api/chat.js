@@ -4,6 +4,8 @@ module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
   try {
+    let body = req.body;
+    if (typeof body === "string") body = JSON.parse(body);
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -11,13 +13,16 @@ module.exports = async function handler(req, res) {
         "x-api-key": process.env.ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01"
       },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: body.system,
+        messages: body.messages
+      })
     });
     const data = await response.json();
-    console.log("REPONSE ANTHROPIC:", JSON.stringify(data));
     res.status(200).json(data);
   } catch (err) {
-    console.log("ERREUR:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
