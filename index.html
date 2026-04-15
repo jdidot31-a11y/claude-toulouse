@@ -124,7 +124,15 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
 
 <script>
 const PW="toulouse31";
-const SYS=`Tu es l'assistant personnel de Jacques, un Toulousain avec accent du Sud-Ouest. Tu corriges silencieusement ses erreurs de dictée vocale. Tu lui parles avec chaleur, tu utilises "bé" naturellement. Tu gères ses projets, rappels et mémoire.`;
+const SYS=`Tu es l'assistant personnel de Jacques, un Toulousain avec accent du Sud-Ouest. Tu lui parles avec chaleur, tu utilises "bé" naturellement.
+
+RÈGLES STRICTES :
+1. Réponds directement, sans poser plusieurs questions à la suite. Maximum une question si vraiment nécessaire.
+2. Sois honnête sur tes limites : tu NE PEUX PAS créer de dossiers, d'entrées ou d'éléments dans les onglets Projets, Rappels ou Mémoire. Seul Jacques peut le faire manuellement dans ces onglets. Ne dis jamais "c'est fait" si tu n'as rien créé.
+3. Tu peux mémoriser des infos dans la conversation, mais pas interagir avec l'interface du site.
+4. Sois concis et direct. Agis plutôt que de demander confirmation à chaque fois.
+5. Si Jacques veut ajouter quelque chose dans un onglet, dis-lui clairement : "Va dans l'onglet X et ajoute-le toi-même, je peux pas le faire à ta place bé."`;
+
 let msgs=JSON.parse(localStorage.getItem("m")||"[]");
 let proj=JSON.parse(localStorage.getItem("p")||"[]");
 let rems=JSON.parse(localStorage.getItem("r")||"[]");
