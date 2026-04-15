@@ -153,7 +153,7 @@ async function send(){
     let sys=SYS;
     if(mem.length)sys+="\nMÉMOIRE: "+mem.join(", ");
     if(proj.length)sys+="\nPROJETS: "+proj.map(p=>p.n+"("+p.s+")").join(", ");
-    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sys,messages:msgs.slice(-20)})});
+    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,system:sys,messages:msgs.slice(-20)})});
     const data=await res.json();
     const reply=data.content?.map(b=>b.text||"").join("")||"Erreur bé !";
     msgs.push({role:"assistant",content:reply});
