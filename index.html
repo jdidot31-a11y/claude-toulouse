@@ -122,7 +122,7 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
   <div id="history-panel" class="panel">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
       <div class="stitle">Conversations sauvegardées</div>
-      <button onclick="exportAll()" style="background:none;border:1px solid #2a2218;border-radius:8px;padding:5px 10px;color:#7a6f5e;font-size:11px;cursor:pointer">⬇ Exporter</button>
+      <div style="display:flex;gap:6px"><button onclick="exportData()" style="background:none;border:1px solid #2a2218;border-radius:8px;padding:5px 10px;color:#7a6f5e;font-size:11px;cursor:pointer">⬇ Sauvegarder</button><label style="background:none;border:1px solid #2a2218;border-radius:8px;padding:5px 10px;color:#7a6f5e;font-size:11px;cursor:pointer">⬆ Restaurer<input type="file" accept=".json" onchange="importData(event)" style="display:none"/></label></div>
     </div>
     <div id="history-list"><div class="empty">Aucune conversation sauvegardée bé !</div></div>
   </div>
@@ -270,24 +270,53 @@ function renderHistory() {
     </div>`).join("");
 }
 
-function exportAll() {
+function exportData() {
   const list = getConvList();
-  let txt = "=== Historique Claude-Toulouse ===\n\n";
+  const convs = {};
   list.forEach(c => {
     const raw = localStorage.getItem(c.id);
-    if (!raw) return;
-    const conv = JSON.parse(raw);
-    txt += `--- ${conv.title} (${conv.date}) ---\n`;
-    conv.messages.forEach(m => {
-      txt += (m.role === "user" ? "Jacques: " : "Claude: ") + m.content + "\n";
-    });
-    txt += "\n";
+    if (raw) convs[c.id] = JSON.parse(raw);
   });
-  const blob = new Blob([txt], {type: "text/plain"});
+  const backup = {
+    version: 1,
+    date: new Date().toISOString(),
+    projets: proj,
+    rappels: rems,
+    memoire: mem,
+    conversations: list,
+    convData: convs,
+    sysCustom: customSys
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "conversations-claude-toulouse.txt";
+  a.download = "claude-toulouse-backup-" + new Date().toLocaleDateString("fr-FR").replace(/\//g,"-") + ".json";
   a.click();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const backup = JSON.parse(e.target.result);
+      if (!backup.version) { alert("Fichier invalide bé !"); return; }
+      if (backup.projets) { proj = backup.projets; localStorage.setItem("p", JSON.stringify(proj)); }
+      if (backup.rappels) { rems = backup.rappels; localStorage.setItem("r", JSON.stringify(rems)); }
+      if (backup.memoire) { mem = backup.memoire; localStorage.setItem("mm", JSON.stringify(mem)); }
+      if (backup.sysCustom) { customSys = backup.sysCustom; localStorage.setItem("sys-custom", customSys); }
+      if (backup.conversations) { saveConvList(backup.conversations); }
+      if (backup.convData) {
+        Object.entries(backup.convData).forEach(([id, conv]) => {
+          localStorage.setItem(id, JSON.stringify(conv));
+        });
+      }
+      renderP(); renderR(); renderM(); renderHistory();
+      alert("Données restaurées bé ! " + (backup.projets?.length||0) + " projets, " + (backup.conversations?.length||0) + " conversations.");
+    } catch(err) { alert("Erreur lors de la restauration bé !"); }
+  };
+  reader.readAsText(file);
 }
 
 // ── AUTO-AMÉLIORATION ─────────────────────────────────────────────
