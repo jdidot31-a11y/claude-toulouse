@@ -242,7 +242,7 @@ function loadConversation(id) {
   msgs = conv.messages || [];
   msgCount = msgs.length;
   document.getElementById("chat-area").innerHTML = "";
-  msgs.forEach(m => addMsg(m.role, m.content, m.corrected, false));
+  msgs.forEach(m => addMsg(m.role, m.content, m.corrected, false, m.executed));
   showTab("chat", document.querySelector(".tab"));
   renderHistory();
 }
@@ -374,7 +374,7 @@ function login() {
         currentConvId = conv.id;
         msgs = conv.messages || [];
         msgCount = msgs.length;
-        msgs.forEach(m => addMsg(m.role, m.content, m.corrected, false));
+        msgs.forEach(m => addMsg(m.role, m.content, m.corrected, false, m.executed));
       } else { currentConvId = genId(); }
     } else { currentConvId = genId(); }
     renderP(); renderR(); renderM(); renderHistory();
@@ -428,7 +428,7 @@ async function send(text, wasCorrected) {
     const {clean, actions} = parseCommands(raw);
     const executed = executeCommands(actions);
 
-    msgs.push({role:"assistant", content:clean});
+    msgs.push({role:"assistant", content:clean, executed: executed.length ? executed : undefined});
     document.getElementById("typing")?.remove();
     addMsg("assistant", clean, false, true, executed);
 
