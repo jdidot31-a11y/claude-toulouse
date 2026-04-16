@@ -101,7 +101,7 @@ function sendCodeToChat() {
   const code = document.getElementById('code-editor').value.trim();
   const lang = document.getElementById('code-lang-sel').value;
   if (!code) return;
-  const msg = 'Voici mon code ' + lang + ', peux-tu l'analyser et l'améliorer ?\n\`\`\`' + lang + '\n' + code + '\n\`\`\`';
+  const msg = "Voici mon code " + lang + ", analyse et améliorer ce code :\n```" + lang + "\n" + code + "\n```";
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => { if(t.textContent.includes('Chat')) t.classList.add('active'); });
   showTab('chat', null);
@@ -110,7 +110,7 @@ function sendCodeToChat() {
 
 function clearEditor() {
   document.getElementById('code-editor').value = '';
-  document.getElementById('code-output').textContent = '// La sortie s'affiche ici...';
+  document.getElementById('code-output').textContent = '// Sortie ici...';
   document.getElementById('code-output').style.color = '#2ecc71';
 }
 
@@ -211,8 +211,8 @@ pre code.hljs{font-family:'Courier New',monospace;font-size:12px;padding:14px 14
     <div class="logo">C</div>
     <h1>Claude — Toulouse</h1>
     <div class="sub">Assistant personnel sécurisé</div>
-    <input type="password" id="pw" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()"/>
-    <button class="btn-main" onclick="login()">Entrer</button>
+    <input type="password" id="pw" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="btn-main" onclick="doLogin()">Entrer</button>
     <div class="err" id="err">Mot de passe incorrect bé !</div>
   </div>
 </div>
@@ -307,7 +307,7 @@ pre code.hljs{font-family:'Courier New',monospace;font-size:12px;padding:14px 14
         <button class="ct-btn ct-clear" onclick="clearEditor()">✕ Vider</button>
       </div>
       <div style="font-size:11px;color:#5a5040;flex-shrink:0">Sortie :</div>
-      <div id="code-output">// La sortie s'affiche ici...</div>
+      <div id="code-output">// Sortie ici...</div>
     </div>
   </div>
 </div>
@@ -316,24 +316,7 @@ pre code.hljs{font-family:'Courier New',monospace;font-size:12px;padding:14px 14
 const PW = "toulouse31";
 
 // ── SYSTÈME PROMPT DE BASE ────────────────────────────────────────
-const BASE_SYS = `Tu es l'assistant personnel et développeur de Jacques, un Toulousain avec accent du Sud-Ouest. Tu lui parles avec chaleur et tu utilises "bé" naturellement.
-
-CRÉATION AUTOMATIQUE : Si Jacques demande de créer un projet, un rappel ou une info en mémoire, inclus une commande dans ta réponse :
-- Pour un projet : [CMD:projet:Nom du projet]
-- Pour un rappel : [CMD:rappel:Texte du rappel:HH:MM]
-- Pour une mémoire : [CMD:memoire:Info à retenir]
-
-CODE : Quand Jacques demande du code :
-1. Toujours mettre le code dans des blocs \`\`\`langage ... \`\`\` (javascript, python, html, css, bash...)
-2. Expliquer brièvement ce que fait le code avant ou après
-3. Pour du JavaScript : le code peut être exécuté directement dans l'onglet Code
-4. Pour du HTML : proposer le code complet prêt à télécharger
-5. Tu peux créer des apps web, des scripts, des outils, de l'automatisation
-
-RÈGLES :
-1. Maximum une question par réponse. Agis directement.
-2. Sois concis et direct.
-3. Pour le code : privilégie des solutions simples et commentées.`;
+const BASE_SYS = "Tu es l'assistant personnel et developpeur de Jacques, un Toulousain avec accent du Sud-Ouest. Tu lui parles avec chaleur et tu utilises bé naturellement.\n\nCREATION AUTOMATIQUE : Si Jacques demande de creer un projet, un rappel ou une info en memoire, inclus une commande dans ta reponse :\n- Pour un projet : [CMD:projet:Nom du projet]\n- Pour un rappel : [CMD:rappel:Texte du rappel:HH:MM]\n- Pour une memoire : [CMD:memoire:Info a retenir]\n\nCODE : Quand Jacques demande du code :\n1. Toujours mettre le code dans des blocs triple-backtick avec le langage (javascript, python, html, css, bash...)\n2. Expliquer brievement ce que fait le code\n3. Pour JavaScript : le code peut etre execute directement dans l'onglet Code\n4. Pour HTML : proposer le code complet pret a telecharger\n5. Tu peux creer des apps web, scripts, outils, automatisation\n\nREGLES :\n1. Maximum une question par reponse. Agis directement.\n2. Sois concis et direct.\n3. Pour le code : solutions simples et commentees.";
 
 // Prompt amélioré automatiquement (chargé depuis localStorage)
 let customSys = localStorage.getItem("sys-custom") || "";
@@ -557,7 +540,7 @@ function executeCommands(actions) {
 }
 
 // ── CONNEXION ─────────────────────────────────────────────────────
-function login() {
+function doLogin() {
   if (document.getElementById("pw").value === PW) {
     document.getElementById("login").style.display = "none";
     document.getElementById("app").style.display = "flex";
@@ -813,7 +796,7 @@ function sendCodeToChat() {
   const code = document.getElementById('code-editor').value.trim();
   const lang = document.getElementById('code-lang-sel').value;
   if (!code) return;
-  const msg = 'Voici mon code ' + lang + ', peux-tu l'analyser et l'améliorer ?\n\`\`\`' + lang + '\n' + code + '\n\`\`\`';
+  const msg = "Voici mon code " + lang + ", analyse et améliorer ce code :\n```" + lang + "\n" + code + "\n```";
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => { if(t.textContent.includes('Chat')) t.classList.add('active'); });
   showTab('chat', null);
@@ -822,7 +805,7 @@ function sendCodeToChat() {
 
 function clearEditor() {
   document.getElementById('code-editor').value = '';
-  document.getElementById('code-output').textContent = '// La sortie s'affiche ici...';
+  document.getElementById('code-output').textContent = '// Sortie ici...';
   document.getElementById('code-output').style.color = '#2ecc71';
 }
 
