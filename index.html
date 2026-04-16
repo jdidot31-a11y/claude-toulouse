@@ -17,24 +17,24 @@ input[type=password]{width:100%;background:#1e1a15;border:1px solid #2a2218;bord
 .btn-main{width:100%;background:linear-gradient(135deg,#c0392b,#a93226);border:none;border-radius:12px;padding:14px;color:white;font-size:15px;font-weight:600;cursor:pointer}
 .err{color:#e74c3c;font-size:12px;margin-top:8px;display:none}
 #app{display:none;flex-direction:column;height:100dvh}
-header{background:#141210;border-bottom:1px solid #1e1a15;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
-.hlogo{width:36px;height:36px;background:linear-gradient(135deg,#c0392b,#d4a017);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white}
+header{background:#141210;border-bottom:1px solid #1e1a15;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.hlogo{width:36px;height:36px;background:linear-gradient(135deg,#c0392b,#d4a017);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0}
 .htitle{font-family:'Playfair Display',serif;font-size:15px}
 .hsub{font-size:10px;color:#7a6f5e}
-.dot{width:7px;height:7px;background:#2ecc71;border-radius:50%;margin-left:auto;box-shadow:0 0 8px #2ecc71aa}
-/* Badge correction accent dans le header */
-#correction-badge{display:none;font-size:10px;color:#d4a017;background:rgba(212,160,23,0.12);border:1px solid rgba(212,160,23,0.3);border-radius:20px;padding:3px 10px;margin-left:auto;animation:pulse 1s infinite}
+#correction-badge{display:none;font-size:10px;color:#d4a017;background:rgba(212,160,23,0.12);border:1px solid rgba(212,160,23,0.3);border-radius:20px;padding:3px 10px;animation:pulse 1s infinite}
+#improve-badge{display:none;font-size:10px;color:#2ecc71;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:20px;padding:3px 10px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-.tabs{display:flex;background:#141210;border-bottom:1px solid #1e1a15;flex-shrink:0}
-.tab{flex:1;padding:10px 4px;border:none;background:none;color:#7a6f5e;font-size:11px;cursor:pointer;border-bottom:2px solid transparent;font-family:'DM Sans',sans-serif}
+.dot{width:7px;height:7px;background:#2ecc71;border-radius:50%;margin-left:auto;box-shadow:0 0 8px #2ecc71aa;flex-shrink:0}
+.tabs{display:flex;background:#141210;border-bottom:1px solid #1e1a15;flex-shrink:0;overflow-x:auto}
+.tab{flex:1;min-width:60px;padding:10px 4px;border:none;background:none;color:#7a6f5e;font-size:10px;cursor:pointer;border-bottom:2px solid transparent;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .tab.active{color:#d4a017;border-bottom-color:#d4a017;font-weight:600}
 #chat-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
 #chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
 .msg-user{background:linear-gradient(135deg,#c0392b22,#c0392b44);border:1px solid #c0392b55;border-radius:16px 16px 4px 16px;padding:10px 14px;align-self:flex-end;max-width:82%;font-size:14px;line-height:1.6}
 .msg-bot{background:#1a1714;border:1px solid #2a2218;border-radius:16px 16px 16px 4px;padding:10px 14px;align-self:flex-start;max-width:88%;font-size:14px;line-height:1.6}
 .msg-label{font-size:9px;color:#d4a017;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
-/* Badge visible sur le message corrigé */
 .msg-corrected-tag{font-size:9px;color:#d4a017;background:rgba(212,160,23,0.1);border:1px solid rgba(212,160,23,0.2);border-radius:6px;padding:1px 6px;display:inline-block;margin-bottom:5px}
+.msg-cmd-tag{font-size:9px;color:#2ecc71;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.2);border-radius:6px;padding:1px 6px;display:inline-block;margin-bottom:5px}
 .typing{display:flex;gap:5px;align-items:center;padding:12px 16px;background:#1a1714;border:1px solid #2a2218;border-radius:16px;align-self:flex-start;width:64px}
 .typing span{width:7px;height:7px;background:#d4a017;border-radius:50%;animation:bounce 1.2s infinite}
 .typing span:nth-child(2){animation-delay:.15s}
@@ -46,6 +46,7 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
 .mic-btn.on{border-color:#c0392b;background:#c0392b22;color:#c0392b}
 .mic-btn.correcting{border-color:#d4a017;background:rgba(212,160,23,0.15);color:#d4a017}
 .send-btn{width:42px;height:42px;border-radius:11px;border:none;background:linear-gradient(135deg,#c0392b,#a93226);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.new-conv-btn{background:linear-gradient(135deg,#c0392b,#d4a017);border:none;border-radius:8px;padding:6px 12px;color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0}
 .panel{flex:1;overflow-y:auto;padding:16px;display:none;flex-direction:column;gap:12px}
 .stitle{font-size:11px;font-weight:600;color:#d4a017;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
 .card2{background:#1a1714;border:1px solid #2a2218;border-radius:14px;padding:14px}
@@ -58,6 +59,14 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
 .del{background:none;border:none;color:#5a5040;cursor:pointer;font-size:16px;padding:2px 6px}
 .empty{color:#5a5040;font-size:13px;text-align:center;padding:20px 0}
 .welcome{text-align:center;padding:40px 16px;color:#7a6f5e}
+/* Historique */
+.conv-item{background:#1a1714;border:1px solid #2a2218;border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color 0.2s;display:flex;align-items:center;gap:10px}
+.conv-item:hover{border-color:#c0392b55}
+.conv-item.active{border-color:#d4a017}
+.conv-title{font-size:13px;color:#ede5d4;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-date{font-size:10px;color:#5a5040;flex-shrink:0}
+.conv-del{background:none;border:none;color:#5a5040;cursor:pointer;font-size:14px;padding:2px 6px;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -77,15 +86,19 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
   <header>
     <div class="hlogo">C</div>
     <div><div class="htitle">Claude — Toulouse</div><div class="hsub">Toujours disponible · Accès privé</div></div>
-    <span id="correction-badge">✦ Correction accent…</span>
+    <span id="correction-badge">✦ Correction…</span>
+    <span id="improve-badge">⚡ Amélioration…</span>
     <div class="dot"></div>
   </header>
   <div class="tabs">
     <button class="tab active" onclick="showTab('chat',this)">💬 Chat</button>
+    <button class="tab" onclick="showTab('history',this)">📚 Historique</button>
     <button class="tab" onclick="showTab('projects',this)">📋 Projets</button>
     <button class="tab" onclick="showTab('reminders',this)">⏰ Rappels</button>
     <button class="tab" onclick="showTab('memory',this)">🧠 Mémoire</button>
   </div>
+
+  <!-- CHAT -->
   <div id="chat-panel">
     <div id="chat-area">
       <div class="welcome">
@@ -100,19 +113,35 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
         <svg id="spin-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
       </button>
       <textarea id="inp" placeholder="Écris ou parle..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
+      <button class="new-conv-btn" onclick="newConversation()" title="Nouvelle conversation">+</button>
       <button class="send-btn" onclick="send()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg></button>
     </div>
   </div>
+
+  <!-- HISTORIQUE -->
+  <div id="history-panel" class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div class="stitle">Conversations sauvegardées</div>
+      <button onclick="exportAll()" style="background:none;border:1px solid #2a2218;border-radius:8px;padding:5px 10px;color:#7a6f5e;font-size:11px;cursor:pointer">⬇ Exporter</button>
+    </div>
+    <div id="history-list"><div class="empty">Aucune conversation sauvegardée bé !</div></div>
+  </div>
+
+  <!-- PROJETS -->
   <div id="projects-panel" class="panel">
     <div class="stitle">Projets</div>
     <div class="add-row"><input class="add-input" id="np" placeholder="Nouveau projet..." onkeydown="if(event.key==='Enter')addP()"/><button class="add-btn" onclick="addP()">+</button></div>
     <div class="card2" id="pl"><div class="empty">Aucun projet bé !</div></div>
   </div>
+
+  <!-- RAPPELS -->
   <div id="reminders-panel" class="panel">
     <div class="stitle">Rappels</div>
-    <div class="add-row"><input class="add-input" id="nr" placeholder="Rappel..." style="flex:2"/><input class="add-input" id="nt" placeholder="Heure" style="flex:1;max-width:80px"/><button class="add-btn" onclick="addR()">+</button></div>
+    <div class="add-row"><input class="add-input" id="nr" placeholder="Rappel..." style="flex:2"/><input class="add-input" id="nt" type="time" style="flex:1;max-width:80px"/><button class="add-btn" onclick="addR()">+</button></div>
     <div class="card2" id="rl"><div class="empty">Aucun rappel !</div></div>
   </div>
+
+  <!-- MÉMOIRE -->
   <div id="memory-panel" class="panel">
     <div class="stitle">Mémoire</div>
     <div class="add-row"><input class="add-input" id="nm" placeholder="Info à retenir..." onkeydown="if(event.key==='Enter')addM()"/><button class="add-btn" onclick="addM()">+</button></div>
@@ -120,192 +149,373 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
   </div>
 </div>
 
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-
 <script>
-const PW="toulouse31";
-const SYS=`Tu es l'assistant personnel de Jacques, un Toulousain avec accent du Sud-Ouest. Tu lui parles avec chaleur, tu utilises "bé" naturellement.
+const PW = "toulouse31";
+
+// ── SYSTÈME PROMPT DE BASE ────────────────────────────────────────
+const BASE_SYS = `Tu es l'assistant personnel de Jacques, un Toulousain avec accent du Sud-Ouest. Tu lui parles avec chaleur et tu utilises "bé" naturellement.
+
+CRÉATION AUTOMATIQUE : Si Jacques demande de créer un projet, un rappel ou une info en mémoire, tu dois inclure une commande spéciale dans ta réponse :
+- Pour un projet : [CMD:projet:Nom du projet]
+- Pour un rappel : [CMD:rappel:Texte du rappel:HH:MM]  (heure optionnelle)
+- Pour une mémoire : [CMD:memoire:Info à retenir]
+Exemple : "Bien sûr ! [CMD:projet:Apiculture] J'ai créé le projet Apiculture bé !"
 
 RÈGLES STRICTES :
-1. Réponds directement, sans poser plusieurs questions à la suite. Maximum une question si vraiment nécessaire.
-2. Sois honnête sur tes limites : tu NE PEUX PAS créer de dossiers, d'entrées ou d'éléments dans les onglets Projets, Rappels ou Mémoire. Seul Jacques peut le faire manuellement dans ces onglets. Ne dis jamais "c'est fait" si tu n'as rien créé.
-3. Tu peux mémoriser des infos dans la conversation, mais pas interagir avec l'interface du site.
-4. Sois concis et direct. Agis plutôt que de demander confirmation à chaque fois.
-5. Si Jacques veut ajouter quelque chose dans un onglet, dis-lui clairement : "Va dans l'onglet X et ajoute-le toi-même, je peux pas le faire à ta place bé."`;
+1. Maximum une question par réponse. Agis directement.
+2. Tu NE PEUX PAS interagir avec l'interface sauf via les commandes [CMD:...] ci-dessus.
+3. Sois concis et direct.
+4. Si Jacques demande de voir l'historique, dis-lui de cliquer sur l'onglet Historique.`;
 
-let msgs=JSON.parse(localStorage.getItem("m")||"[]");
-let proj=JSON.parse(localStorage.getItem("p")||"[]");
-let rems=JSON.parse(localStorage.getItem("r")||"[]");
-let mem=JSON.parse(localStorage.getItem("mm")||"[]");
-
-function login(){
-  if(document.getElementById("pw").value===PW){
-    document.getElementById("login").style.display="none";
-    document.getElementById("app").style.display="flex";
-    msgs.forEach(m=>addMsg(m.role,m.content,false));
-    renderP();renderR();renderM();
-  }else{document.getElementById("err").style.display="block";document.getElementById("pw").value="";}
+// Prompt amélioré automatiquement (chargé depuis localStorage)
+let customSys = localStorage.getItem("sys-custom") || "";
+function getSys() {
+  let s = customSys || BASE_SYS;
+  if(mem.length) s += "\nMÉMOIRE: " + mem.join(", ");
+  if(proj.length) s += "\nPROJETS: " + proj.map(p=>p.n+"("+p.s+")").join(", ");
+  return s;
 }
 
-function showTab(t,btn){
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  btn.classList.add("active");
-  document.getElementById("chat-panel").style.display=t==="chat"?"flex":"none";
-  ["projects","reminders","memory"].forEach(x=>{
-    const el=document.getElementById(x+"-panel");
-    el.style.display=x===t?"flex":"none";
+// ── DONNÉES ───────────────────────────────────────────────────────
+let proj = JSON.parse(localStorage.getItem("p")||"[]");
+let rems = JSON.parse(localStorage.getItem("r")||"[]");
+let mem  = JSON.parse(localStorage.getItem("mm")||"[]");
+
+// ── GESTION CONVERSATIONS ─────────────────────────────────────────
+let currentConvId = null;
+let msgs = [];
+let msgCount = 0; // pour l'auto-amélioration
+
+function genId() { return "conv-" + Date.now(); }
+
+function getConvList() {
+  return JSON.parse(localStorage.getItem("conv-list") || "[]");
+}
+
+function saveConvList(list) {
+  localStorage.setItem("conv-list", JSON.stringify(list));
+}
+
+function saveCurrentConv() {
+  if (!currentConvId || msgs.length === 0) return;
+  const conv = {
+    id: currentConvId,
+    title: getConvTitle(),
+    date: new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"}),
+    messages: msgs
+  };
+  localStorage.setItem(currentConvId, JSON.stringify(conv));
+  // Mettre à jour la liste
+  let list = getConvList();
+  const idx = list.findIndex(c => c.id === currentConvId);
+  if (idx >= 0) list[idx] = {id: conv.id, title: conv.title, date: conv.date};
+  else list.unshift({id: conv.id, title: conv.title, date: conv.date});
+  saveConvList(list);
+}
+
+function getConvTitle() {
+  const first = msgs.find(m => m.role === "user");
+  if (!first) return "Nouvelle conversation";
+  return first.content.substring(0, 40) + (first.content.length > 40 ? "…" : "");
+}
+
+function newConversation() {
+  saveCurrentConv();
+  currentConvId = genId();
+  msgs = [];
+  msgCount = 0;
+  document.getElementById("chat-area").innerHTML = `
+    <div class="welcome">
+      <div style="font-size:36px;margin-bottom:12px">🌹</div>
+      <div style="font-family:'Playfair Display',serif;font-size:24px;color:#ede5d4;margin-bottom:6px">Nouvelle conversation bé !</div>
+      <div style="font-size:13px;line-height:1.7">Qu'est-ce qu'on fait aujourd'hui ?</div>
+    </div>`;
+  renderHistory();
+}
+
+function loadConversation(id) {
+  saveCurrentConv();
+  const raw = localStorage.getItem(id);
+  if (!raw) return;
+  const conv = JSON.parse(raw);
+  currentConvId = conv.id;
+  msgs = conv.messages || [];
+  msgCount = msgs.length;
+  document.getElementById("chat-area").innerHTML = "";
+  msgs.forEach(m => addMsg(m.role, m.content, m.corrected, false));
+  showTab("chat", document.querySelector(".tab"));
+  renderHistory();
+}
+
+function deleteConversation(id, e) {
+  e.stopPropagation();
+  localStorage.removeItem(id);
+  let list = getConvList().filter(c => c.id !== id);
+  saveConvList(list);
+  if (currentConvId === id) newConversation();
+  else renderHistory();
+}
+
+function renderHistory() {
+  const list = getConvList();
+  const el = document.getElementById("history-list");
+  if (!list.length) { el.innerHTML = '<div class="empty">Aucune conversation bé !</div>'; return; }
+  el.innerHTML = list.map(c => `
+    <div class="conv-item ${c.id === currentConvId ? 'active' : ''}" onclick="loadConversation('${c.id}')">
+      <div style="flex:1;min-width:0">
+        <div class="conv-title">${c.title}</div>
+        <div class="conv-date">${c.date}</div>
+      </div>
+      <button class="conv-del" onclick="deleteConversation('${c.id}', event)">✕</button>
+    </div>`).join("");
+}
+
+function exportAll() {
+  const list = getConvList();
+  let txt = "=== Historique Claude-Toulouse ===\n\n";
+  list.forEach(c => {
+    const raw = localStorage.getItem(c.id);
+    if (!raw) return;
+    const conv = JSON.parse(raw);
+    txt += `--- ${conv.title} (${conv.date}) ---\n`;
+    conv.messages.forEach(m => {
+      txt += (m.role === "user" ? "Jacques: " : "Claude: ") + m.content + "\n";
+    });
+    txt += "\n";
   });
+  const blob = new Blob([txt], {type: "text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "conversations-claude-toulouse.txt";
+  a.click();
 }
 
-async function send(){
-  const inp=document.getElementById("inp");
-  const txt=inp.value.trim();
-  if(!txt)return;
-  inp.value="";
-  addMsg("user",txt,false);
-  msgs.push({role:"user",content:txt});
-  const t=document.createElement("div");
-  t.className="typing";t.id="typing";
+// ── AUTO-AMÉLIORATION ─────────────────────────────────────────────
+async function tryAutoImprove() {
+  if (msgs.length < 15 || msgs.length % 15 !== 0) return;
+  document.getElementById("improve-badge").style.display = "inline-block";
+  try {
+    const sample = msgs.slice(-15).map(m => m.role + ": " + m.content).join("\n");
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 600,
+        system: "Tu es un expert en optimisation de prompts IA. Analyse cette conversation et génère un prompt système amélioré pour que l'assistant soit plus utile à Jacques. Retourne UNIQUEMENT le nouveau prompt, sans explication.",
+        messages: [{role:"user", content:"Conversation à analyser:\n"+sample+"\n\nPrompt actuel:\n"+(customSys||BASE_SYS)+"\n\nGénère un prompt amélioré."}]
+      })
+    });
+    const data = await res.json();
+    const improved = data.content?.map(b=>b.text||"").join("") || "";
+    if (improved.length > 100) {
+      customSys = improved;
+      localStorage.setItem("sys-custom", improved);
+    }
+  } catch(e) {}
+  finally { document.getElementById("improve-badge").style.display = "none"; }
+}
+
+// ── COMMANDES AUTOMATIQUES [CMD:...] ─────────────────────────────
+function parseCommands(text) {
+  let actions = [];
+  // Extraire toutes les commandes
+  const cmdRegex = /\[CMD:(\w+):([^\]]+)\]/g;
+  let match;
+  while ((match = cmdRegex.exec(text)) !== null) {
+    actions.push({type: match[1], args: match[2].split(":")});
+  }
+  // Nettoyer le texte
+  const clean = text.replace(/\[CMD:[^\]]+\]/g, "").trim();
+  return {clean, actions};
+}
+
+function executeCommands(actions) {
+  let executed = [];
+  actions.forEach(a => {
+    if (a.type === "projet" && a.args[0]) {
+      const name = a.args[0].trim();
+      proj.push({n:name, s:"En cours", d:new Date().toLocaleDateString("fr-FR")});
+      localStorage.setItem("p", JSON.stringify(proj));
+      renderP();
+      executed.push("projet \""+name+"\" créé");
+    }
+    if (a.type === "rappel" && a.args[0]) {
+      const t = a.args[0].trim();
+      const h = a.args[1] ? a.args[1].trim() : "";
+      rems.push({t, h, done:false});
+      localStorage.setItem("r", JSON.stringify(rems));
+      renderR();
+      executed.push("rappel \""+t+"\" créé");
+    }
+    if (a.type === "memoire" && a.args[0]) {
+      const info = a.args[0].trim();
+      mem.push(info);
+      localStorage.setItem("mm", JSON.stringify(mem));
+      renderM();
+      executed.push("mémorisé : \""+info+"\"");
+    }
+  });
+  return executed;
+}
+
+// ── CONNEXION ─────────────────────────────────────────────────────
+function login() {
+  if (document.getElementById("pw").value === PW) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "flex";
+    // Créer une nouvelle conversation ou reprendre la dernière
+    const list = getConvList();
+    if (list.length > 0) {
+      const last = list[0];
+      const raw = localStorage.getItem(last.id);
+      if (raw) {
+        const conv = JSON.parse(raw);
+        currentConvId = conv.id;
+        msgs = conv.messages || [];
+        msgCount = msgs.length;
+        msgs.forEach(m => addMsg(m.role, m.content, m.corrected, false));
+      } else { currentConvId = genId(); }
+    } else { currentConvId = genId(); }
+    renderP(); renderR(); renderM(); renderHistory();
+  } else {
+    document.getElementById("err").style.display = "block";
+    document.getElementById("pw").value = "";
+  }
+}
+
+function showTab(t, btn) {
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  document.getElementById("chat-panel").style.display = t==="chat" ? "flex" : "none";
+  ["history","projects","reminders","memory"].forEach(x => {
+    document.getElementById(x+"-panel").style.display = x===t ? "flex" : "none";
+  });
+  if (t === "history") renderHistory();
+}
+
+// ── ENVOI MESSAGE ─────────────────────────────────────────────────
+async function send(text, wasCorrected) {
+  const inp = document.getElementById("inp");
+  const txt = (text || inp.value).trim();
+  if (!txt) return;
+  inp.value = "";
+  addMsg("user", txt, wasCorrected, true);
+  msgs.push({role:"user", content:txt, corrected: wasCorrected||false});
+  msgCount++;
+
+  const t = document.createElement("div");
+  t.className="typing"; t.id="typing";
   t.innerHTML="<span></span><span></span><span></span>";
   document.getElementById("chat-area").appendChild(t);
-  document.getElementById("chat-area").scrollTop=99999;
-  try{
-    let sys=SYS;
-    if(mem.length)sys+="\nMÉMOIRE: "+mem.join(", ");
-    if(proj.length)sys+="\nPROJETS: "+proj.map(p=>p.n+"("+p.s+")").join(", ");
-    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,system:sys,messages:msgs.slice(-20)})});
-    const data=await res.json();
-    const reply=data.content?.map(b=>b.text||"").join("")||"Erreur bé !";
-    msgs.push({role:"assistant",content:reply});
-    localStorage.setItem("m",JSON.stringify(msgs.slice(-50)));
+  document.getElementById("chat-area").scrollTop = 99999;
+
+  try {
+    const res = await fetch("/api/chat", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model:"claude-haiku-4-5-20251001",
+        max_tokens:1000,
+        system: getSys(),
+        messages: msgs.slice(-20).map(m=>({role:m.role,content:m.content}))
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.map(b=>b.text||"").join("") || "Erreur bé !";
+
+    // Traitement des commandes
+    const {clean, actions} = parseCommands(raw);
+    const executed = executeCommands(actions);
+
+    msgs.push({role:"assistant", content:clean});
     document.getElementById("typing")?.remove();
-    addMsg("assistant",reply,false);
-  }catch(e){document.getElementById("typing")?.remove();addMsg("assistant","Erreur de connexion bé !",false);}
+    addMsg("assistant", clean, false, true, executed);
+
+    // Sauvegarder automatiquement
+    saveCurrentConv();
+    renderHistory();
+
+    // Tenter auto-amélioration
+    tryAutoImprove();
+
+  } catch(e) {
+    document.getElementById("typing")?.remove();
+    addMsg("assistant", "Erreur de connexion bé !", false, true);
+  }
 }
 
-function addMsg(role,text,wasCorrected){
-  const area=document.getElementById("chat-area");
-  const d=document.createElement("div");
-  d.className=role==="user"?"msg-user":"msg-bot";
-  if(role!=="user"){
-    d.innerHTML='<div class="msg-label">Claude · Toulouse</div>'+text.replace(/\n/g,"<br>");
+function addMsg(role, text, wasCorrected, save, executed) {
+  const area = document.getElementById("chat-area");
+  const d = document.createElement("div");
+  d.className = role==="user" ? "msg-user" : "msg-bot";
+  if (role !== "user") {
+    let html = '<div class="msg-label">Claude · Toulouse</div>';
+    if (executed && executed.length) {
+      html += executed.map(e=>`<div class="msg-cmd-tag">✓ ${e}</div>`).join("");
+    }
+    html += text.replace(/\n/g,"<br>");
+    d.innerHTML = html;
   } else {
-    // Si le message vocal a été corrigé, on affiche un petit badge discret
-    if(wasCorrected){
-      d.innerHTML='<div class="msg-corrected-tag">✦ accent corrigé</div><div>'+text+'</div>';
+    if (wasCorrected) {
+      d.innerHTML = '<div class="msg-corrected-tag">✦ accent corrigé</div><div>'+text+'</div>';
     } else {
-      d.textContent=text;
+      d.textContent = text;
     }
   }
   area.appendChild(d);
-  area.scrollTop=99999;
+  area.scrollTop = 99999;
 }
 
-// ── CORRECTION ACCENT TOULOUSAIN ─────────────────────────────────
-async function correctAccent(raw){
-  try{
-    const res=await fetch("/api/correct",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({text:raw})
+// ── CORRECTION ACCENT ─────────────────────────────────────────────
+async function correctAccent(raw) {
+  try {
+    const res = await fetch("/api/correct", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({text:raw})
     });
-    const data=await res.json();
-    return {text:data.corrected||raw, wasCorrected:data.wasCorrected||false};
-  }catch{
-    return {text:raw, wasCorrected:false};
-  }
+    const data = await res.json();
+    return {text: data.corrected||raw, wasCorrected: data.wasCorrected||false};
+  } catch { return {text:raw, wasCorrected:false}; }
 }
 
-// ── MICRO AVEC CORRECTION AUTO ────────────────────────────────────
-function startVoice(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){alert("Reconnaissance vocale non supportée sur ce navigateur.");return;}
-  const r=new SR();
-  r.lang="fr-FR";
-  r.continuous=false;
-  r.interimResults=false;
+// ── MICRO ─────────────────────────────────────────────────────────
+function startVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert("Reconnaissance vocale non supportée."); return; }
+  const r = new SR(); r.lang="fr-FR"; r.continuous=false; r.interimResults=false;
   const btn=document.getElementById("micbtn");
-  const micIcon=document.getElementById("mic-icon");
-  const spinIcon=document.getElementById("spin-icon");
+  const micI=document.getElementById("mic-icon");
+  const spinI=document.getElementById("spin-icon");
   const badge=document.getElementById("correction-badge");
 
-  r.onstart=()=>{
-    btn.classList.add("on");
-  };
-
+  r.onstart=()=>btn.classList.add("on");
   r.onresult=async(e)=>{
     const raw=e.results[0][0].transcript;
-    btn.classList.remove("on");
-    // Passe en mode "correction en cours"
-    btn.classList.add("correcting");
-    micIcon.style.display="none";
-    spinIcon.style.display="block";
-    badge.style.display="inline-block";
-
-    const {text:corrected, wasCorrected}=await correctAccent(raw);
-
-    // Fin correction
-    btn.classList.remove("correcting");
-    micIcon.style.display="block";
-    spinIcon.style.display="none";
-    badge.style.display="none";
-
-    // Envoie directement avec le texte corrigé
-    const inp=document.getElementById("inp");
-    inp.value=corrected;
-
-    // Affiche le message avec badge si corrigé
-    inp.value="";
-    addMsg("user",corrected,wasCorrected);
-    msgs.push({role:"user",content:corrected});
-
-    const t=document.createElement("div");
-    t.className="typing";t.id="typing";
-    t.innerHTML="<span></span><span></span><span></span>";
-    document.getElementById("chat-area").appendChild(t);
-    document.getElementById("chat-area").scrollTop=99999;
-
-    try{
-      let sys=SYS;
-      if(mem.length)sys+="\nMÉMOIRE: "+mem.join(", ");
-      if(proj.length)sys+="\nPROJETS: "+proj.map(p=>p.n+"("+p.s+")").join(", ");
-      const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,system:sys,messages:msgs.slice(-20)})});
-      const data=await res.json();
-      const reply=data.content?.map(b=>b.text||"").join("")||"Erreur bé !";
-      msgs.push({role:"assistant",content:reply});
-      localStorage.setItem("m",JSON.stringify(msgs.slice(-50)));
-      document.getElementById("typing")?.remove();
-      addMsg("assistant",reply,false);
-    }catch(err){
-      document.getElementById("typing")?.remove();
-      addMsg("assistant","Erreur de connexion bé !",false);
-    }
+    btn.classList.remove("on"); btn.classList.add("correcting");
+    micI.style.display="none"; spinI.style.display="block"; badge.style.display="inline-block";
+    const {text:corrected,wasCorrected}=await correctAccent(raw);
+    btn.classList.remove("correcting"); micI.style.display="block"; spinI.style.display="none"; badge.style.display="none";
+    send(corrected, wasCorrected);
   };
-
-  r.onerror=()=>{
-    btn.classList.remove("on","correcting");
-    micIcon.style.display="block";
-    spinIcon.style.display="none";
-    badge.style.display="none";
-  };
-
-  r.onend=()=>{
-    btn.classList.remove("on");
-  };
-
+  r.onerror=()=>{ btn.classList.remove("on","correcting"); micI.style.display="block"; spinI.style.display="none"; badge.style.display="none"; };
+  r.onend=()=>btn.classList.remove("on");
   r.start();
 }
 
+// ── PROJETS ───────────────────────────────────────────────────────
 function addP(){const v=document.getElementById("np").value.trim();if(!v)return;proj.push({n:v,s:"En cours",d:new Date().toLocaleDateString("fr-FR")});localStorage.setItem("p",JSON.stringify(proj));document.getElementById("np").value="";renderP();}
 function toggleP(i){proj[i].s=proj[i].s.startsWith("✅")?"En cours":"✅ Terminé";localStorage.setItem("p",JSON.stringify(proj));renderP();}
 function delP(i){proj.splice(i,1);localStorage.setItem("p",JSON.stringify(proj));renderP();}
 function renderP(){const el=document.getElementById("pl");if(!proj.length){el.innerHTML='<div class="empty">Aucun projet bé !</div>';return;}el.innerHTML=proj.map((p,i)=>`<div class="item"><button class="chk" onclick="toggleP(${i})">${p.s.startsWith("✅")?"✅":"○"}</button><div style="flex:1"><div style="font-size:13px;color:${p.s.startsWith("✅")?"#5a5040":"#ede5d4"};text-decoration:${p.s.startsWith("✅")?"line-through":"none"}">${p.n}</div><div style="font-size:10px;color:#5a5040">${p.s} · ${p.d}</div></div><button class="del" onclick="delP(${i})">✕</button></div>`).join("");}
 
+// ── RAPPELS ───────────────────────────────────────────────────────
 function addR(){const t=document.getElementById("nr").value.trim();const h=document.getElementById("nt").value;if(!t)return;rems.push({t,h,done:false});localStorage.setItem("r",JSON.stringify(rems));document.getElementById("nr").value="";document.getElementById("nt").value="";renderR();}
 function toggleR(i){rems[i].done=!rems[i].done;localStorage.setItem("r",JSON.stringify(rems));renderR();}
 function delR(i){rems.splice(i,1);localStorage.setItem("r",JSON.stringify(rems));renderR();}
 function renderR(){const el=document.getElementById("rl");if(!rems.length){el.innerHTML='<div class="empty">Aucun rappel !</div>';return;}el.innerHTML=rems.map((r,i)=>`<div class="item"><button class="chk" onclick="toggleR(${i})">${r.done?"✅":"○"}</button><div style="flex:1"><div style="font-size:13px;color:${r.done?"#5a5040":"#ede5d4"};text-decoration:${r.done?"line-through":"none"}">${r.t}</div>${r.h?`<div style="font-size:10px;color:#d4a017">⏰ ${r.h}</div>`:""}</div><button class="del" onclick="delR(${i})">✕</button></div>`).join("");}
 
+// ── MÉMOIRE ───────────────────────────────────────────────────────
 function addM(){const v=document.getElementById("nm").value.trim();if(!v)return;mem.push(v);localStorage.setItem("mm",JSON.stringify(mem));document.getElementById("nm").value="";renderM();}
 function delM(i){mem.splice(i,1);localStorage.setItem("mm",JSON.stringify(mem));renderM();}
 function renderM(){const el=document.getElementById("ml");if(!mem.length){el.innerHTML='<div class="empty">Aucune info bé !</div>';return;}el.innerHTML=mem.map((m,i)=>`<div class="item"><div style="flex:1;font-size:13px">🧠 ${m}</div><button class="del" onclick="delM(${i})">✕</button></div>`).join("");}
