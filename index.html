@@ -5,6 +5,116 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Claude Toulouse</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js">
+// ── RENDU CODE DANS LES MESSAGES ─────────────────────────────────
+function renderCodeBlocks(el) {
+  const text = el.innerHTML;
+  // Détecter les blocs ```lang ... ```
+  const rendered = text.replace(/```(\w+)?\n?([\s\S]*?)```/g, (match, lang, code) => {
+    const l = lang || 'text';
+    const id = 'code-' + Math.random().toString(36).substr(2,8);
+    const escaped = code.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<div class="code-header">
+      <span class="code-lang">${l}</span>
+      <div class="code-btns">
+        ${l==='javascript'||l==='js' ? `<button class="run-btn" onclick="sendToEditor(this,'${id}','${l}')">▶ Exécuter</button>` : ''}
+        <button class="dl-btn" onclick="downloadFromMsg(this,'${l}')">⬇</button>
+        <button class="copy-btn" onclick="copyCode(this,'${id}')">Copier</button>
+      </div>
+    </div><pre><code id="${id}" class="language-${l}">${escaped}</code></pre>`;
+  });
+  el.innerHTML = rendered;
+  // Appliquer highlight.js
+  el.querySelectorAll('pre code').forEach(b => {
+    try { hljs.highlightElement(b); } catch(e) {}
+  });
+}
+
+function copyCode(btn, id) {
+  const code = document.getElementById(id);
+  if (!code) return;
+  navigator.clipboard.writeText(code.innerText);
+  btn.textContent = '✓ Copié !';
+  setTimeout(() => btn.textContent = 'Copier', 1500);
+}
+
+function sendToEditor(btn, id, lang) {
+  const code = document.getElementById(id);
+  if (!code) return;
+  document.getElementById('code-editor').value = code.innerText;
+  document.getElementById('code-lang-sel').value = lang === 'js' ? 'javascript' : lang;
+  // Switcher vers l'onglet code
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { if(t.textContent.includes('Code')) t.classList.add('active'); });
+  showTab('code', null);
+}
+
+function downloadFromMsg(btn, lang) {
+  const pre = btn.closest('.code-header').nextElementSibling;
+  if (!pre) return;
+  const code = pre.querySelector('code');
+  if (!code) return;
+  const ext = {javascript:'js',python:'py',html:'html',css:'css',bash:'sh',json:'json'}[lang] || 'txt';
+  const blob = new Blob([code.innerText], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'code-claude-toulouse.' + ext; a.click();
+}
+
+// ── ÉDITEUR DE CODE ───────────────────────────────────────────────
+function runCode() {
+  const code = document.getElementById('code-editor').value.trim();
+  const out = document.getElementById('code-output');
+  if (!code) { out.textContent = '// Rien à exécuter bé !'; return; }
+  out.style.color = '#2ecc71';
+  out.textContent = '';
+  // Capturer console.log
+  const logs = [];
+  const origLog = console.log;
+  const origErr = console.error;
+  console.log = (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a,null,2) : String(a)).join(' '));
+  console.error = (...args) => logs.push('❌ ' + args.join(' '));
+  try {
+    const result = eval(code);
+    console.log = origLog; console.error = origErr;
+    if (logs.length) out.textContent = logs.join('\n');
+    else if (result !== undefined) out.textContent = typeof result === 'object' ? JSON.stringify(result,null,2) : String(result);
+    else out.textContent = '✓ Exécuté sans sortie.';
+  } catch(e) {
+    console.log = origLog; console.error = origErr;
+    out.style.color = '#e74c3c';
+    out.textContent = '❌ ' + e.message;
+    if (logs.length) out.textContent = logs.join('\n') + '\n' + out.textContent;
+  }
+}
+
+function downloadCode() {
+  const code = document.getElementById('code-editor').value;
+  const lang = document.getElementById('code-lang-sel').value;
+  const ext = {javascript:'js',python:'py',html:'html',css:'css',bash:'sh',json:'json'}[lang] || 'txt';
+  const blob = new Blob([code], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'code-claude-toulouse.' + ext; a.click();
+}
+
+function sendCodeToChat() {
+  const code = document.getElementById('code-editor').value.trim();
+  const lang = document.getElementById('code-lang-sel').value;
+  if (!code) return;
+  const msg = 'Voici mon code ' + lang + ', peux-tu l'analyser et l'améliorer ?\n\`\`\`' + lang + '\n' + code + '\n\`\`\`';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { if(t.textContent.includes('Chat')) t.classList.add('active'); });
+  showTab('chat', null);
+  setTimeout(() => { document.getElementById('inp').value = msg; send(msg, false); }, 100);
+}
+
+function clearEditor() {
+  document.getElementById('code-editor').value = '';
+  document.getElementById('code-output').textContent = '// La sortie s'affiche ici...';
+  document.getElementById('code-output').style.color = '#2ecc71';
+}
+
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0c0b09;color:#ede5d4;font-family:'DM Sans',sans-serif;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
@@ -67,6 +177,31 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
 .conv-date{font-size:10px;color:#5a5040;flex-shrink:0}
 .conv-del{background:none;border:none;color:#5a5040;cursor:pointer;font-size:14px;padding:2px 6px;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* Code */
+pre{position:relative;margin:8px 0;border-radius:10px;overflow:hidden}
+pre code.hljs{font-family:'Courier New',monospace;font-size:12px;padding:14px 14px 14px 14px;border-radius:10px;overflow-x:auto;display:block}
+.code-header{background:#1a1a1a;border-radius:10px 10px 0 0;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #333}
+.code-lang{font-size:10px;color:#7a6a55;text-transform:uppercase;font-weight:600}
+.code-btns{display:flex;gap:6px}
+.copy-btn,.run-btn,.dl-btn{border:none;border-radius:6px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:opacity 0.2s}
+.copy-btn{background:#2a2218;color:#d4a017}
+.run-btn{background:#1a3a1a;color:#2ecc71}
+.dl-btn{background:#1a1a3a;color:#5b9bd5}
+.copy-btn:hover,.run-btn:hover,.dl-btn:hover{opacity:0.8}
+/* Onglet Code */
+#code-panel{flex:1;display:none;flex-direction:column;overflow:hidden}
+.code-editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:12px;gap:10px}
+#code-editor{flex:1;background:#141210;border:1px solid #2a2218;border-radius:12px;padding:14px;color:#ede5d4;font-family:'Courier New',monospace;font-size:13px;resize:none;outline:none;min-height:200px;overflow-y:auto}
+#code-output{background:#0a0a0a;border:1px solid #1a3a1a;border-radius:12px;padding:12px;font-family:'Courier New',monospace;font-size:12px;color:#2ecc71;max-height:180px;overflow-y:auto;min-height:60px;white-space:pre-wrap}
+.code-toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.ct-btn{border:none;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600}
+.ct-run{background:linear-gradient(135deg,#1a4a1a,#2ecc71);color:#fff}
+.ct-clear{background:#1e1a15;border:1px solid #2a2218;color:#7a6f5e}
+.ct-dl{background:linear-gradient(135deg,#1a1a4a,#5b9bd5);color:#fff}
+.ct-send{background:linear-gradient(135deg,#c0392b,#d4a017);color:#fff}
+#code-lang-sel{background:#1e1a15;border:1px solid #2a2218;border-radius:8px;padding:7px 10px;color:#ede5d4;font-size:12px;outline:none;font-family:'DM Sans',sans-serif}
+
 </style>
 </head>
 <body>
@@ -96,6 +231,7 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
     <button class="tab" onclick="showTab('projects',this)">📋 Projets</button>
     <button class="tab" onclick="showTab('reminders',this)">⏰ Rappels</button>
     <button class="tab" onclick="showTab('memory',this)">🧠 Mémoire</button>
+    <button class="tab" onclick="showTab('code',this)">💻 Code</button>
   </div>
 
   <!-- CHAT -->
@@ -147,25 +283,57 @@ textarea{flex:1;background:#1e1a15;border:1px solid #2a2218;border-radius:12px;p
     <div class="add-row"><input class="add-input" id="nm" placeholder="Info à retenir..." onkeydown="if(event.key==='Enter')addM()"/><button class="add-btn" onclick="addM()">+</button></div>
     <div class="card2" id="ml"><div class="empty">Aucune info bé !</div></div>
   </div>
+
+  <!-- CODE -->
+  <div id="code-panel">
+    <div class="code-editor-wrap">
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <div class="stitle" style="margin:0">Éditeur de code</div>
+        <select id="code-lang-sel">
+          <option value="javascript">JavaScript</option>
+          <option value="python">Python</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="json">JSON</option>
+          <option value="bash">Bash</option>
+        </select>
+        <div style="margin-left:auto;font-size:10px;color:#5a5040">JS = exécution directe</div>
+      </div>
+      <textarea id="code-editor" placeholder="Colle ou écris ton code ici...&#10;&#10;Les blocs de code du chat apparaissent ici automatiquement quand tu cliques dessus 💡"></textarea>
+      <div class="code-toolbar">
+        <button class="ct-btn ct-run" onclick="runCode()">▶ Exécuter (JS)</button>
+        <button class="ct-btn ct-dl" onclick="downloadCode()">⬇ Télécharger</button>
+        <button class="ct-btn ct-send" onclick="sendCodeToChat()">💬 Envoyer au chat</button>
+        <button class="ct-btn ct-clear" onclick="clearEditor()">✕ Vider</button>
+      </div>
+      <div style="font-size:11px;color:#5a5040;flex-shrink:0">Sortie :</div>
+      <div id="code-output">// La sortie s'affiche ici...</div>
+    </div>
+  </div>
 </div>
 
 <script>
 const PW = "toulouse31";
 
 // ── SYSTÈME PROMPT DE BASE ────────────────────────────────────────
-const BASE_SYS = `Tu es l'assistant personnel de Jacques, un Toulousain avec accent du Sud-Ouest. Tu lui parles avec chaleur et tu utilises "bé" naturellement.
+const BASE_SYS = `Tu es l'assistant personnel et développeur de Jacques, un Toulousain avec accent du Sud-Ouest. Tu lui parles avec chaleur et tu utilises "bé" naturellement.
 
-CRÉATION AUTOMATIQUE : Si Jacques demande de créer un projet, un rappel ou une info en mémoire, tu dois inclure une commande spéciale dans ta réponse :
+CRÉATION AUTOMATIQUE : Si Jacques demande de créer un projet, un rappel ou une info en mémoire, inclus une commande dans ta réponse :
 - Pour un projet : [CMD:projet:Nom du projet]
-- Pour un rappel : [CMD:rappel:Texte du rappel:HH:MM]  (heure optionnelle)
+- Pour un rappel : [CMD:rappel:Texte du rappel:HH:MM]
 - Pour une mémoire : [CMD:memoire:Info à retenir]
-Exemple : "Bien sûr ! [CMD:projet:Apiculture] J'ai créé le projet Apiculture bé !"
 
-RÈGLES STRICTES :
+CODE : Quand Jacques demande du code :
+1. Toujours mettre le code dans des blocs \`\`\`langage ... \`\`\` (javascript, python, html, css, bash...)
+2. Expliquer brièvement ce que fait le code avant ou après
+3. Pour du JavaScript : le code peut être exécuté directement dans l'onglet Code
+4. Pour du HTML : proposer le code complet prêt à télécharger
+5. Tu peux créer des apps web, des scripts, des outils, de l'automatisation
+
+RÈGLES :
 1. Maximum une question par réponse. Agis directement.
-2. Tu NE PEUX PAS interagir avec l'interface sauf via les commandes [CMD:...] ci-dessus.
-3. Sois concis et direct.
-4. Si Jacques demande de voir l'historique, dis-lui de cliquer sur l'onglet Historique.`;
+2. Sois concis et direct.
+3. Pour le code : privilégie des solutions simples et commentées.`;
 
 // Prompt amélioré automatiquement (chargé depuis localStorage)
 let customSys = localStorage.getItem("sys-custom") || "";
@@ -417,6 +585,7 @@ function showTab(t, btn) {
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
   if (btn) btn.classList.add("active");
   document.getElementById("chat-panel").style.display = t==="chat" ? "flex" : "none";
+  document.getElementById("code-panel").style.display = t==="code" ? "flex" : "none";
   ["history","projects","reminders","memory"].forEach(x => {
     document.getElementById(x+"-panel").style.display = x===t ? "flex" : "none";
   });
@@ -483,8 +652,9 @@ function addMsg(role, text, wasCorrected, save, executed) {
     if (executed && executed.length) {
       html += executed.map(e=>`<div class="msg-cmd-tag">✓ ${e}</div>`).join("");
     }
-    html += text.replace(/\n/g,"<br>");
+    html += text;
     d.innerHTML = html;
+    renderCodeBlocks(d);
   } else {
     if (wasCorrected) {
       d.innerHTML = '<div class="msg-corrected-tag">✦ accent corrigé</div><div>'+text+'</div>';
@@ -548,6 +718,114 @@ function renderR(){const el=document.getElementById("rl");if(!rems.length){el.in
 function addM(){const v=document.getElementById("nm").value.trim();if(!v)return;mem.push(v);localStorage.setItem("mm",JSON.stringify(mem));document.getElementById("nm").value="";renderM();}
 function delM(i){mem.splice(i,1);localStorage.setItem("mm",JSON.stringify(mem));renderM();}
 function renderM(){const el=document.getElementById("ml");if(!mem.length){el.innerHTML='<div class="empty">Aucune info bé !</div>';return;}el.innerHTML=mem.map((m,i)=>`<div class="item"><div style="flex:1;font-size:13px">🧠 ${m}</div><button class="del" onclick="delM(${i})">✕</button></div>`).join("");}
+
+// ── RENDU CODE DANS LES MESSAGES ─────────────────────────────────
+function renderCodeBlocks(el) {
+  const text = el.innerHTML;
+  // Détecter les blocs ```lang ... ```
+  const rendered = text.replace(/```(\w+)?\n?([\s\S]*?)```/g, (match, lang, code) => {
+    const l = lang || 'text';
+    const id = 'code-' + Math.random().toString(36).substr(2,8);
+    const escaped = code.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<div class="code-header">
+      <span class="code-lang">${l}</span>
+      <div class="code-btns">
+        ${l==='javascript'||l==='js' ? `<button class="run-btn" onclick="sendToEditor(this,'${id}','${l}')">▶ Exécuter</button>` : ''}
+        <button class="dl-btn" onclick="downloadFromMsg(this,'${l}')">⬇</button>
+        <button class="copy-btn" onclick="copyCode(this,'${id}')">Copier</button>
+      </div>
+    </div><pre><code id="${id}" class="language-${l}">${escaped}</code></pre>`;
+  });
+  el.innerHTML = rendered;
+  // Appliquer highlight.js
+  el.querySelectorAll('pre code').forEach(b => {
+    try { hljs.highlightElement(b); } catch(e) {}
+  });
+}
+
+function copyCode(btn, id) {
+  const code = document.getElementById(id);
+  if (!code) return;
+  navigator.clipboard.writeText(code.innerText);
+  btn.textContent = '✓ Copié !';
+  setTimeout(() => btn.textContent = 'Copier', 1500);
+}
+
+function sendToEditor(btn, id, lang) {
+  const code = document.getElementById(id);
+  if (!code) return;
+  document.getElementById('code-editor').value = code.innerText;
+  document.getElementById('code-lang-sel').value = lang === 'js' ? 'javascript' : lang;
+  // Switcher vers l'onglet code
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { if(t.textContent.includes('Code')) t.classList.add('active'); });
+  showTab('code', null);
+}
+
+function downloadFromMsg(btn, lang) {
+  const pre = btn.closest('.code-header').nextElementSibling;
+  if (!pre) return;
+  const code = pre.querySelector('code');
+  if (!code) return;
+  const ext = {javascript:'js',python:'py',html:'html',css:'css',bash:'sh',json:'json'}[lang] || 'txt';
+  const blob = new Blob([code.innerText], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'code-claude-toulouse.' + ext; a.click();
+}
+
+// ── ÉDITEUR DE CODE ───────────────────────────────────────────────
+function runCode() {
+  const code = document.getElementById('code-editor').value.trim();
+  const out = document.getElementById('code-output');
+  if (!code) { out.textContent = '// Rien à exécuter bé !'; return; }
+  out.style.color = '#2ecc71';
+  out.textContent = '';
+  // Capturer console.log
+  const logs = [];
+  const origLog = console.log;
+  const origErr = console.error;
+  console.log = (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a,null,2) : String(a)).join(' '));
+  console.error = (...args) => logs.push('❌ ' + args.join(' '));
+  try {
+    const result = eval(code);
+    console.log = origLog; console.error = origErr;
+    if (logs.length) out.textContent = logs.join('\n');
+    else if (result !== undefined) out.textContent = typeof result === 'object' ? JSON.stringify(result,null,2) : String(result);
+    else out.textContent = '✓ Exécuté sans sortie.';
+  } catch(e) {
+    console.log = origLog; console.error = origErr;
+    out.style.color = '#e74c3c';
+    out.textContent = '❌ ' + e.message;
+    if (logs.length) out.textContent = logs.join('\n') + '\n' + out.textContent;
+  }
+}
+
+function downloadCode() {
+  const code = document.getElementById('code-editor').value;
+  const lang = document.getElementById('code-lang-sel').value;
+  const ext = {javascript:'js',python:'py',html:'html',css:'css',bash:'sh',json:'json'}[lang] || 'txt';
+  const blob = new Blob([code], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'code-claude-toulouse.' + ext; a.click();
+}
+
+function sendCodeToChat() {
+  const code = document.getElementById('code-editor').value.trim();
+  const lang = document.getElementById('code-lang-sel').value;
+  if (!code) return;
+  const msg = 'Voici mon code ' + lang + ', peux-tu l'analyser et l'améliorer ?\n\`\`\`' + lang + '\n' + code + '\n\`\`\`';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { if(t.textContent.includes('Chat')) t.classList.add('active'); });
+  showTab('chat', null);
+  setTimeout(() => { document.getElementById('inp').value = msg; send(msg, false); }, 100);
+}
+
+function clearEditor() {
+  document.getElementById('code-editor').value = '';
+  document.getElementById('code-output').textContent = '// La sortie s'affiche ici...';
+  document.getElementById('code-output').style.color = '#2ecc71';
+}
+
 </script>
 </body>
 </html>
